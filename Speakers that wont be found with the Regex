@@ -5,6 +5,7 @@ New RegEx: ^[a-zA-Z]*:\s|^[a-zA-Z]*\s\([a-zA-Z\s]*\):\s|^[a-zA-Z'-]*?[\s-][a-zA-
 |^[a-zA-Z'-]*?[\s-][a-zA-Z0-9'-]*:
 |^[a-zA-Z']*?\s[a-zA-Z']*?\s[a-zA-Z']*:
 
+Left unhandled exemptions:
 Ted (2030):       
 Ted from 2030: 
 Guy#1:
