@@ -1,0 +1,8 @@
+^[(a-zA-Z)]*:\s
+I think thats the one to go with
+^= begin of line
+[(a-zA-Z)]* Any letter
+: 
+/s (empty space)
+
+### in case needed
