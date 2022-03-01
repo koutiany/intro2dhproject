@@ -47,9 +47,6 @@ episode_fun <- function(file) { file %>%
            !str_detect(text, "^ad")) # Remove lines that start with ad (for 'ads', the link of google ads)
 }
 
-# The above function reads each episode, turns the html text into a data frame and organizes it clearly for text analysis. For example:
-
-episode_fun(all_episodes$link[15])
 
 #We now have a data frame with only dialogue for each character. We need to apply that function to each episode and bind everything together. We first apply the function to every episode.
 
@@ -81,27 +78,27 @@ lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ {
   unnest() %>%
   mutate(all_lines_id = 1:nrow(.))
 
+#add column for the speaker 
+lines_all_characters$speaker <- lines_all_characters$text
+lines_all_characters <- lines_all_characters[, c(1,5,2, 3, 4)]
+
+
+regTest = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
+
+clean_speaker <- function(lines_all_characters){
+  for (text in lines_all_characters) {
+    if (grepl(regTest, lines_all_characters$text)){
+      lines_all_characters$speaker <- str_match(lines_all_characters$text, regTest)
+      lines_all_characters$speaker <-- tolower(lines_all_characters$speaker)                   #that doesnt work yet
+      lines_all_characters$speaker <- str_remove(lines_all_characters$speaker, ":")
+      lines_all_characters$text <- str_remove(lines_all_characters$text, regTest)
+    } else {
+      lines_all_characters$speaker <- "n/a"
+    }
+  }
+}
+clean_speaker(lines_all_characters)
+
+
 lines_all_characters
-
-
-
-#break the linesdown per                                                             MAIN CHARACTER
-lines_characters <-
-  map(filter(all_episodes, count > 100) %>% pull(text), ~ { 
-    # only loop over episodes that have over 100 lines
-    .x %>%
-      separate(text, c("character", "text"), sep = ":", extra = 'merge') %>%
-      # separate character dialogue from actual dialogo
-      unnest_tokens(character, character) %>%
-      filter(str_detect(character, paste0(paste0("^", characters, "$"), collapse = "|"))) %>%
-      # only count the lines of our chosen characters
-      mutate(episode_lines_id = 1:nrow(.))
-  }) %>%
-  setNames(filter(all_episodes, count > 100) %>% # name according to episode
-             unite(season_episode, season, episode_number, sep = "x") %>%
-             pull(season_episode)) %>%
-  enframe() %>%
-  unnest() %>%
-  mutate(all_lines_id = 1:nrow(.))
-
 
