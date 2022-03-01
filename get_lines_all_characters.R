@@ -27,9 +27,6 @@ episode_getter <- function(link) {
 all_episodes <- map_df(all_pages, episode_getter) # loop over all seasons and get all episode links
 all_episodes$id <- 1:nrow(all_episodes)
 
-#Organized data frame with all episodes and the links:  all_episodes
-all_episodes
-
 #The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.
 
 episode_fun <- function(file) { file %>%
@@ -54,7 +51,7 @@ all_episodes$text <- map(all_episodes$link, episode_fun)
 
 # Some episodes (e.g. S08E09 or S04E06) don't have the characters with the dialoge or not the full script. we need to exclud them.
 
-all_episodes$count <- map_dbl(all_episodes$text, nrow)     #? not sure about this step
+all_episodes$count <- map_dbl(all_episodes$text, nrow)     
 #----------------------------------------------------------------
 
 #We can extend the previous tibble to be a bit more organized by separating the episode-season column into separate season and episo numbers.
@@ -78,27 +75,38 @@ lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ {
   unnest() %>%
   mutate(all_lines_id = 1:nrow(.))
 
-#add column for the speaker 
+
+# Seperate Season from Episode
+
+clean_speaker_regex <- "^[0-9]*"
+clean_speaker2_regex <- "x[0-9]*"
+
+lines_all_characters$episode <- lines_all_characters$name
+lines_all_characters <- lines_all_characters[, c(1,5,2,3,4)]
+
+get_season <- str_extract(lines_all_characters$name, clean_speaker_regex)
+lines_all_characters$name <- get_season
+
+get_ep_number <- str_extract(lines_all_characters$episode, clean_speaker2_regex)
+get_ep_number <- str_remove(get_ep_number, "x")
+lines_all_characters$episode <- get_ep_number
+
+lines_all_characters %>%
+  rename(season = name)
+
+
+#add column for the speaker
 lines_all_characters$speaker <- lines_all_characters$text
-lines_all_characters <- lines_all_characters[, c(1,5,2, 3, 4)]
+lines_all_characters <- lines_all_characters[, c(1,2, 6, 3, 4, 5)]
 
+#clean speaker
+regex_speaker = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
+speakers <- str_extract(lines_all_characters$text, regex_speaker)
+speakers <- str_remove(speakers, ":")
+lines_all_characters$speaker <- speakers
 
-regTest = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
+#clean text 
+clear_text <- str_remove(lines_all_characters$text, regex_speaker)
+lines_all_characters$text <- clear_text
 
-clean_speaker <- function(lines_all_characters){
-  for (text in lines_all_characters) {
-    if (grepl(regTest, lines_all_characters$text)){
-      lines_all_characters$speaker <- str_match(lines_all_characters$text, regTest)
-      lines_all_characters$speaker <-- tolower(lines_all_characters$speaker)                   #that doesnt work yet
-      lines_all_characters$speaker <- str_remove(lines_all_characters$speaker, ":")
-      lines_all_characters$text <- str_remove(lines_all_characters$text, regTest)
-    } else {
-      lines_all_characters$speaker <- "n/a"
-    }
-  }
-}
-clean_speaker(lines_all_characters)
-
-
-lines_all_characters
 
