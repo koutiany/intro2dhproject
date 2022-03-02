@@ -13,14 +13,14 @@ episode_getter <- function(link) {
     link %>%
     read_html() %>%
     html_nodes(".topictitle") # Get the html node name with 'selector gadget'
-  
+
   episode_links <- title_reference %>%
     html_attr("href") %>%
     gsub("^.", "", .) %>%
     paste0(main_url, .) %>%
     setNames(title_reference %>% html_text()) %>%
     enframe(name = "episode_name", value = "link")
-  
+
   episode_links
 }
 
@@ -51,7 +51,7 @@ all_episodes$text <- map(all_episodes$link, episode_fun)
 
 # Some episodes (e.g. S08E09 or S04E06) don't have the characters with the dialoge or not the full script. we need to exclud them.
 
-all_episodes$count <- map_dbl(all_episodes$text, nrow)     
+all_episodes$count <- map_dbl(all_episodes$text, nrow)
 #----------------------------------------------------------------
 
 #We can extend the previous tibble to be a bit more organized by separating the episode-season column into separate season and episo numbers.
@@ -63,7 +63,7 @@ all_episodes
 
 #Break the lines down per character                                                (ALL CHARACTERS)
 
-lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ { 
+lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ {
   # only loop over episodes that have over 15 lines
   .x %>%
     mutate(episode_lines_id = 1:nrow(.))
@@ -105,8 +105,13 @@ speakers <- str_extract(lines_all_characters$text, regex_speaker)
 speakers <- str_remove(speakers, ":")
 lines_all_characters$speaker <- speakers
 
-#clean text 
+#clean text
 clear_text <- str_remove(lines_all_characters$text, regex_speaker)
 lines_all_characters$text <- clear_text
+<<<<<<< Updated upstream
+=======
 
 
+#export to csv for next step usage locally, plz change if use locally
+write.csv(lines_all_characters,"/Users/TianyiKou/Documents/lines_all.csv", row.names = FALSE)
+>>>>>>> Stashed changes
