@@ -1,3 +1,4 @@
+#This file is not longer substancial to this project.
 library(rvest)
 library(tidyverse)
 library(stringr)
@@ -13,7 +14,7 @@ episode_getter <- function(link) {
     link %>%
     read_html() %>%
     html_nodes(".topictitle") # Get the html node name with 'selector gadget'
-  
+
   episode_links <-
     title_reference %>%
     html_attr("href") %>%
@@ -21,7 +22,7 @@ episode_getter <- function(link) {
     paste0(main_url, .) %>%
     setNames(title_reference %>% html_text()) %>%
     enframe(name = "episode_name", value = "link")
-  
+
   episode_links
 }
 
@@ -34,7 +35,7 @@ all_episodes
 #The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.
 
 episode_fun <- function(file) {
-  
+
   file %>%
     read_html() %>%
     html_nodes(".postbody") %>%
@@ -69,11 +70,11 @@ all_episodes <-
   all_episodes %>%
   separate(episode_name, c("season", "episode"), "-", extra = "merge") %>%
   separate(season, c("season", "episode_number"), sep = "x")
- 
+
 #Break the lines down per character
 
 lines_characters <-
-  map(filter(all_episodes, count > 100) %>% pull(text), ~ { 
+  map(filter(all_episodes, count > 100) %>% pull(text), ~ {
     # only loop over episodes that have over 100 lines
     .x %>%
       separate(text, c("character", "text"), sep = ":", extra = 'merge') %>%
@@ -108,5 +109,3 @@ words_per_character <-
 
 #One row per word, per character, per episode with the id of the line of the word.
 words_per_character
-
-
