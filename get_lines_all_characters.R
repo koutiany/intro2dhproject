@@ -2,11 +2,11 @@ library(rvest)
 library(tidyverse)
 library(stringr)
 library(tidytext)
+library(dplyr)
 
 main_url <- "http://transcripts.foreverdreaming.org"
 all_pages <- paste0("http://transcripts.foreverdreaming.org/viewforum.php?f=177&start=", seq(0, 200, 25))
 characters <- c("ted", "lily", "marshall", "barney", "robin")
-
 
 episode_getter <- function(link) {
   title_reference <-
@@ -43,7 +43,6 @@ episode_fun <- function(file) { file %>%
            str_detect(text, "^*.:"), # I want only lines with start with dialogue (:)
            !str_detect(text, "^ad")) # Remove lines that start with ad (for 'ads', the link of google ads)
 }
-
 
 #We now have a data frame with only dialogue for each character. We need to apply that function to each episode and bind everything together. We first apply the function to every episode.
 
@@ -91,9 +90,9 @@ get_ep_number <- str_extract(lines_all_characters$episode, clean_speaker2_regex)
 get_ep_number <- str_remove(get_ep_number, "x")
 lines_all_characters$episode <- get_ep_number
 
-lines_all_characters %>%
-  rename(season = name)
-
+#change name of first column to season
+names(lines_all_characters)[1] <- 'season'
+colnames(lines_all_characters)
 
 #add column for the speaker
 lines_all_characters$speaker <- lines_all_characters$text
@@ -103,15 +102,12 @@ lines_all_characters <- lines_all_characters[, c(1,2, 6, 3, 4, 5)]
 regex_speaker = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
 speakers <- str_extract(lines_all_characters$text, regex_speaker)
 speakers <- str_remove(speakers, ":")
-lines_all_characters$speaker <- speakers
+lines_all_characters$speaker <- tolower(speakers)
 
 #clean text
 clear_text <- str_remove(lines_all_characters$text, regex_speaker)
+#clear_text <- str_remove(lines_all_characters$text, '^?.\\([a-zA-Z.\\s]*\\)')
 lines_all_characters$text <- clear_text
-<<<<<<< Updated upstream
-=======
 
-
-#export to csv for next step usage locally, plz change if use locally
+#export to csv for next step usage
 write.csv(lines_all_characters,"/Users/TianyiKou/Documents/lines_all.csv", row.names = FALSE)
->>>>>>> Stashed changes
