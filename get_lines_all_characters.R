@@ -6,7 +6,6 @@ library(dplyr)
 
 main_url <- "http://transcripts.foreverdreaming.org"
 all_pages <- paste0("http://transcripts.foreverdreaming.org/viewforum.php?f=177&start=", seq(0, 200, 25))
-characters <- c("ted", "lily", "marshall", "barney", "robin")
 
 episode_getter <- function(link) {
   title_reference <-
