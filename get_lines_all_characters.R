@@ -12,14 +12,14 @@ episode_getter <- function(link) {
     link %>%
     read_html() %>%
     html_nodes(".topictitle") # Get the html node name with 'selector gadget'
-  
+
   episode_links <- title_reference %>%
     html_attr("href") %>%
     gsub("^.", "", .) %>%
     paste0(main_url, .) %>%
     setNames(title_reference %>% html_text()) %>%
     enframe(name = "episode_name", value = "link")
-  
+
   episode_links
 }
 
@@ -65,7 +65,6 @@ lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ {
   unnest() %>%
   mutate(all_lines_id = 1:nrow(.))
 
-
 # Seperate Season from Episode
 
 get_season_regex <- "^[0-9]*"
@@ -86,7 +85,7 @@ colnames(lines_all_characters)
 
 #add column for the speaker
 lines_all_characters$speaker <- lines_all_characters$text
-lines_all_characters <- lines_all_characters[, c(1,2, 6, 3, 4, 5)]
+lines_all_characters <- lines_all_characters[, c(1, 2, 6, 3, 4, 5)]
 
 #clean speaker
 regex_speaker = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
@@ -99,20 +98,20 @@ lines_all_characters$speaker <- tolower(speakers)
 #clean text
 clear_text <- str_remove(lines_all_characters$text, regex_speaker)
 clear_text <- str_remove(clear_text, '^\\([a-zA-Z\\s]*\\)')
-#clear_text <- str_remove(lines_all_characters$text, '^?.\\([a-zA-Z.\\s]*\\)')
 lines_all_characters$text <- clear_text
 
 #unification of character names based on regular expression patterns
 all_characters <- lines_all_characters %>% group_by(speaker) %>% summarize(text_bound = paste(text, collapse = " "))
 
-lines_all_characters %>% mutate(speaker = if_else(str_detect(speaker,"mar?h?s?h?ah?ll?|marshall's voice|marshall young"), "marshall", speaker))
-lines_all_characters %>% mutate(speaker = if_else(str_detect(speaker,"ted\\s|narrtor"), "ted", speaker))
-lines_all_characters %>% mutate(speaker = if_else(str_detect(speaker,"lill?y\\s"), "lily", speaker))
-lines_all_characters %>% mutate(speaker = if_else(str_detect(speaker,"robii?b?n\\s"), "robin", speaker))
-lines_all_characters %>% mutate(speaker = if_else(str_detect(speaker,"bare?n?en?y"), "barney", speaker))
+lines_all_characters <- lines_all_characters %>% mutate(speaker = if_else(str_detect(speaker,"mar?h?s?h?ah?ll?|marshall's voice|marshall young|mashall|marshal"), "marshall", speaker))  %>%
+  mutate(speaker = if_else(str_detect(speaker,"ted\\s|narrator"), "ted", speaker)) %>%
+  mutate(speaker = if_else(str_detect(speaker,"lill?y\\s"), "lily", speaker)) %>%
+  mutate(speaker = if_else(str_detect(speaker,"robii?b?n\\s"), "robin", speaker)) %>%
+  mutate(speaker = if_else(str_detect(speaker,"bare?n?en?y"), "barney", speaker))
 
 #colappsing of text based on groups
 new <- lines_all_characters %>% group_by(season, episode, speaker) %>% summarize(text_bound = paste(text, collapse = " "))
-lines_per_characters <- lines_all_characters %>% group_by(speaker = "barney", season, episode) %>% summarize(text_bound = paste(text, collapse = " "))
+new <- filter(new, season == "01" |season == "02" |season == "03"|season == "04"|season == "05"|season == "06")
 
-write.csv(new,"/Users/marma/Documents/studium/Digital Humanities/lines_all_characters.csv", row.names = FALSE)
+#export to csv for next step usage
+write.csv(new,"/Users/TianyiKou/Documents/R/new1.csv", row.names = FALSE)

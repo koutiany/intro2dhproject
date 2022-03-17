@@ -3,14 +3,15 @@ options(stringsAsFactors = FALSE)
 library(quanteda)
 library(topicmodels)
 
-textdata <- read.csv("new_season1_6.csv", sep =",", encoding = "UTF-8")
+textdata <- read.csv("new1.csv", sep =",", encoding = "UTF-8")
 textdata$text[1]
 himym_corpus <- corpus(textdata$text, docnames = textdata$doc_id)
 
 #build a dictionary of lemmas
 lemma_data <- read.csv("/Users/TianyiKou/Documents/R/baseform_en.tsv", encoding = "UTF-8")
 #extended stopword list
-stopwords_extended <- readLines("/Users/TianyiKou/Documents/R/stopwords_himym.txt", encoding = "UTF-8")
+stopwords_extended <- readLines("/Users/TianyiKou/Documents/R/stopwords_himym.txt", encoding = "UTF-8") %>% str_trim()
+view(stopwords_extended)
 
 # Create a DTM (may take a while)
 corpus_tokens <- himym_corpus %>%
@@ -19,7 +20,7 @@ corpus_tokens <- himym_corpus %>%
   tokens_replace(lemma_data$inflected_form, lemma_data$lemma,
                  valuetype = "fixed") %>%
   tokens_remove(pattern = stopwords_extended, padding = T)
-
+corpus_tokens[[7]]
 himym_collocations <- quanteda.textstats::textstat_collocations(corpus_tokens,
                                                                min_count = 10)
 #himym_collocations <- himym_collocations[1:250, ]
@@ -32,9 +33,8 @@ DTM <- corpus_tokens %>%
   dfm_trim(min_docfreq = 3)
 
 dim(DTM)
-#most words I can think of already existed in the stopwords list
 
-top10_terms <- c("ted", "lily", "marshall", "barney", "robin")
+top10_terms <- c("good", "ll", "bad", "damn","nice","guy")
 DTM <- DTM[, !(colnames(DTM) %in% top10_terms)]
 
 # due to vocabulary pruning, we have empty rows in our DTM
@@ -44,7 +44,7 @@ sel_idx <- rowSums(DTM) > 0
 DTM <- DTM[sel_idx, ]
 textdata <- textdata[sel_idx, ]
 
-# load package topicmodels
+# load package topic models
 require(topicmodels)
 # number of topics
 K <- 10
@@ -53,7 +53,7 @@ topicModel <- LDA(DTM, K, method="Gibbs", control=list(
   iter = 2500,
   seed = 1,
   verbose = 25,
-  alpha = 0.01))
+  alpha = 0.002))
 
 # have a look a some of the results (posterior
 # distributions)
@@ -82,7 +82,6 @@ rowSums(theta)[1:10] # rows in theta sum to 1
 terms(topicModel, 25)
 
 
-
 # Visualization
 # LDAvis browser
 library(LDAvis)
@@ -92,3 +91,11 @@ json <- createJSON(phi = beta, theta = theta, doc.length = rowSums(DTM),
                    vocab = colnames(DTM), term.frequency = colSums(DTM), mds.method = svd_tsne,
                    plot.opts = list(xlab = "", ylab = ""))
 serVis(json)
+
+theta <- theta %>% as_tibble %>% mutate(speaker = textdata$speaker) %>% group_by(speaker) %>% summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE)))
+
+robin_theta <- filter(theta, speaker == "robin")
+ted_theta <- filter(theta, speaker == "ted")
+barney_theta <- filter(theta, speaker == "barney")
+lily_theta <- filter(theta, speaker == "lily")
+marshall_theta <-filter(theta, speaker == "marshall")
