@@ -2,6 +2,7 @@ setwd("/Users/TianyiKou/Documents/R")
 options(stringsAsFactors = FALSE)
 library(quanteda)
 library(topicmodels)
+library(stringr)
 
 textdata <- read.csv("new1.csv", sep =",", encoding = "UTF-8")
 textdata$text[50]
