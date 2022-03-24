@@ -50,6 +50,7 @@ at
 away
 awfully
 b
+bad
 barney
 be
 became
@@ -104,6 +105,7 @@ couldn't
 course
 currently
 d
+damn
 definitely
 described
 despite
@@ -171,8 +173,10 @@ goes
 going
 gone
 gonna
+good
 got
 gotten
+guy
 h
 had
 hadn't
@@ -245,6 +249,7 @@ know
 knows
 known
 l
+ll
 la
 last
 lately
@@ -267,6 +272,7 @@ looks
 ltd
 m
 mainly
+make
 many
 marshall
 marshall's
@@ -299,6 +305,7 @@ never
 nevertheless
 new
 next
+nice
 nine
 no
 nobody
@@ -368,6 +375,7 @@ regards
 relatively
 respectively
 right
+rn
 robin 
 s
 said
@@ -469,6 +477,7 @@ throughout
 thru
 thus
 to
+today
 too
 took
 toward
@@ -544,6 +553,7 @@ while
 whither
 who
 who's
+whoa
 whoever
 whole
 whom
@@ -578,8 +588,3 @@ yourself
 yourselves
 z
 zero
-rn
-ll
-today
-good
-bad
