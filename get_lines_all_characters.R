@@ -12,14 +12,14 @@ episode_getter <- function(link) {
     link %>%
     read_html() %>%
     html_nodes(".topictitle") # Get the html node name with 'selector gadget'
-
+  
   episode_links <- title_reference %>%
     html_attr("href") %>%
     gsub("^.", "", .) %>%
     paste0(main_url, .) %>%
     setNames(title_reference %>% html_text()) %>%
     enframe(name = "episode_name", value = "link")
-
+  
   episode_links
 }
 
@@ -44,17 +44,14 @@ episode_fun <- function(file) { file %>%
 }
 
 #We now have a data frame with only dialogue for each character. We need to apply that function to each episode and bind everything together. We first apply the function to every episode.
-
-all_episodes$text <- map(all_episodes$link, episode_fun)
+all_episodes$text <- map(all_episodes$link, episode_fun)  #may take a while
 
 # Some episodes (e.g. S08E09 or S04E06) don't have the characters with the dialoge or not the full script. we need to exclud them.
-
 all_episodes$count <- map_dbl(all_episodes$text, nrow)
 
-#Break the lines down per character                                                (ALL CHARACTERS)
-
+#Break the lines down per character           (ALL CHARACTERS)
 lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ {
-  # only loop over episodes that have over 15 lines
+  
   .x %>%
     mutate(episode_lines_id = 1:nrow(.))
 }) %>%
@@ -66,7 +63,6 @@ lines_all_characters <- map(filter(all_episodes, count > 15) %>% pull(text), ~ {
   mutate(all_lines_id = 1:nrow(.))
 
 # Seperate Season from Episode
-
 get_season_regex <- "^[0-9]*"
 get_episode_regex <- "x[0-9]*"
 
@@ -81,22 +77,20 @@ get_ep_number <- str_extract(lines_all_characters$episode, get_episode_regex)
 get_ep_number <- str_remove(get_ep_number, "x")
 lines_all_characters$episode <- get_ep_number
 
-colnames(lines_all_characters)
-
 #add column for the speaker
 lines_all_characters$speaker <- lines_all_characters$text
-lines_all_characters <- lines_all_characters[, c(1, 2, 6, 3, 4, 5)]
+lines_all_characters <- lines_all_characters[, c(1,2, 6, 3, 4, 5)]
 
 #clean speaker
-regex_speaker = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
+regex_speaker = "^([^:]+):"
 speakers <- str_extract(lines_all_characters$text, regex_speaker)
 speakers <- str_remove(speakers, ":")
 speakers <- gsub("\\s*\\([^\\)]+\\)","",as.character(speakers))
-
 lines_all_characters$speaker <- tolower(speakers)
 
 #clean text
-clear_text <- str_remove(lines_all_characters$text, regex_speaker)
+regex_text = "^[a-zA-Z]*:\\s|^[a-zA-Z]*\\s\\([a-zA-Z\\s]*\\):\\s|^[a-zA-Z'-]*?[\\s-][a-zA-Z0-9'-]*:|^[a-zA-Z']*?\\s[a-zA-Z']*?\\s[a-zA-Z']*:"
+clear_text <- str_remove(lines_all_characters$text, regex_text)
 clear_text <- str_remove(clear_text, '^\\([a-zA-Z\\s]*\\)')
 lines_all_characters$text <- clear_text
 
@@ -109,9 +103,12 @@ lines_all_characters <- lines_all_characters %>% mutate(speaker = if_else(str_de
   mutate(speaker = if_else(str_detect(speaker,"robii?b?n\\s"), "robin", speaker)) %>%
   mutate(speaker = if_else(str_detect(speaker,"bare?n?en?y"), "barney", speaker))
 
+
 #colappsing of text based on groups
 new <- lines_all_characters %>% group_by(season, episode, speaker) %>% summarize(text_bound = paste(text, collapse = " "))
 new <- filter(new, season == "01" |season == "02" |season == "03"|season == "04"|season == "05"|season == "06")
 
 #export to csv for next step usage
-write.csv(new,"/Users/TianyiKou/Documents/R/new1.csv", row.names = FALSE)
+write.csv(new,"/Users/marma/Documents/studium/Digital Humanities/new1.csv", row.names = FALSE)
+
+
