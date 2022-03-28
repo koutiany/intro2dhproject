@@ -476,6 +476,7 @@ through
 throughout
 thru
 thus
+time
 to
 today
 too
@@ -588,3 +589,4 @@ yourself
 yourselves
 z
 zero
+
