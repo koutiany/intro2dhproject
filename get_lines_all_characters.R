@@ -11,7 +11,7 @@ episode_getter <- function(link) {
   title_reference <-
     link %>%
     read_html() %>%
-    html_nodes(".topictitle") # Get the html node name with 'selector gadget'
+    html_nodes(".topictitle") 
   
   episode_links <- title_reference %>%
     html_attr("href") %>%
@@ -109,6 +109,6 @@ new <- lines_all_characters %>% group_by(season, episode, speaker) %>% summarize
 new <- filter(new, season == "01" |season == "02" |season == "03"|season == "04"|season == "05"|season == "06")
 
 #export to csv for next step usage
-write.csv(new,"/Users/marma/Documents/studium/Digital Humanities/new1.csv", row.names = FALSE)
+write.csv(new,"/Users/marma/Documents/studium/Digital Humanities/final.csv", row.names = FALSE)
 
 
