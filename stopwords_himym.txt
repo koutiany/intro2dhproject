@@ -50,6 +50,7 @@ at
 away
 awfully
 b
+back
 bad
 barney
 be
@@ -63,6 +64,7 @@ before
 beforehand
 behind
 being
+believe
 below
 beside
 besides
@@ -70,6 +72,7 @@ best
 better
 between
 beyond
+big
 blah
 both
 brief
@@ -78,6 +81,7 @@ by
 c
 c'mon
 c's
+call
 came
 can
 can't
@@ -105,6 +109,7 @@ couldn't
 course
 currently
 d
+day
 damn
 definitely
 described
@@ -116,6 +121,7 @@ do
 does
 doesn't
 doing
+don
 don't
 done
 down
@@ -149,6 +155,7 @@ f
 far
 few
 fifth
+find
 first
 five
 followed
@@ -167,8 +174,10 @@ get
 gets
 getting
 given
+give
 gives
 go
+god
 goes
 going
 gone
@@ -176,10 +185,13 @@ gonna
 good
 got
 gotten
+great
+guess
 guy
 h
 had
 hadn't
+happen
 happens
 hardly
 has
@@ -257,6 +269,7 @@ later
 latter
 latterly
 least
+leave
 less
 lest
 let
@@ -269,6 +282,7 @@ little
 look
 looking
 looks
+lot
 ltd
 m
 mainly
@@ -281,6 +295,7 @@ maybe
 me
 mean
 meanwhile
+meet
 merely
 might
 more
@@ -306,6 +321,7 @@ nevertheless
 new
 next
 nice
+night
 nine
 no
 nobody
@@ -353,12 +369,14 @@ particularly
 per
 perhaps
 placed
+play
 please
 plus
 possible
 presumably
 probably
 provides
+put
 q
 que
 quite
@@ -373,6 +391,7 @@ regarding
 regardless
 regards
 relatively
+remember
 respectively
 right
 rn
@@ -432,6 +451,7 @@ t
 t's
 take
 taken
+talk
 ted
 tell
 tends
@@ -476,9 +496,11 @@ through
 throughout
 thru
 thus
+thing
 time
 to
 today
+tonight
 too
 took
 toward
@@ -518,6 +540,7 @@ viz
 von
 vs
 w
+wait
 wanna
 want
 wants
@@ -576,6 +599,7 @@ wow
 x
 y
 yeah
+year
 yes
 yet
 you
