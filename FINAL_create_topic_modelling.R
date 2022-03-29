@@ -104,7 +104,7 @@ topic_proportion_per_season <- aggregate(theta, by = list(season= textdata$seaso
 colnames(topic_proportion_per_season)[2:(K+1)] <- topicNames
 
 vizDataFrame <- melt(topic_proportion_per_season, id.vars="season")
-#plot topic proportions per decade as bar plot
+#plot topic proportions per season as bar plot
 require(pals)
 ggplot(vizDataFrame,
        aes(x=season, y=value, fill=variable)) +
